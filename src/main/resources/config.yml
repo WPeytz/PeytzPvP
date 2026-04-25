@@ -1,0 +1,9 @@
+game:
+  min-players: 2
+  max-players: 24
+  countdown-seconds: 30
+  grace-period-seconds: 60
+  ending-delay-seconds: 10
+  spawn-radius: 50
+  feast-min-minutes: 15
+  feast-max-minutes: 22

@@ -1,0 +1,210 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const features = [
+  {
+    icon: "Phases",
+    title: "Game phase state machine",
+    body: "Lobby → countdown → grace → combat → ending. Clean transitions, no stuck rounds.",
+  },
+  {
+    icon: "Arenas",
+    title: "Config-driven arenas",
+    body: "Define arenas, spawn points, and feast locations from YAML. No hardcoded maps.",
+  },
+  {
+    icon: "Loot",
+    title: "Tiered chest loot",
+    body: "Three loot tiers across the map. Push for better gear, risk PvP at the feast.",
+  },
+  {
+    icon: "Grace",
+    title: "Configurable grace period",
+    body: "60s default — tune it from config. PvP unlocks once everyone is geared.",
+  },
+  {
+    icon: "Spectate",
+    title: "Spectator mode",
+    body: "Eliminated players spectate the rest of the round instead of getting kicked.",
+  },
+  {
+    icon: "Stats",
+    title: "Persistent stats",
+    body: "SQLite for the MVP, Postgres later. Wins, kills, K/D — tracked per player.",
+  },
+];
+
+const kits = [
+  {
+    cls: "kit-tank",
+    name: "Tank",
+    desc: "Iron chestplate and a shield. Soak hits, hold ground at the feast.",
+  },
+  {
+    cls: "kit-archer",
+    name: "Archer",
+    desc: "Bow, arrows, leather armor. Pick fights from range and reposition fast.",
+  },
+  {
+    cls: "kit-assassin",
+    name: "Assassin",
+    desc: "Iron sword, speed potion. Burst damage, hit-and-run, no second chances.",
+  },
+  {
+    cls: "kit-survivor",
+    name: "Survivor",
+    desc: "Food, golden apples, bandages. Outlast the others — last one alive wins.",
+  },
+];
+
+const commands = [
+  { cmd: "/kit", desc: "Pick a starter kit before the round begins." },
+  { cmd: "/kit <name>", desc: "Select a specific kit by name." },
+  { cmd: "/arena create <name>", desc: "Admin — create a new arena." },
+  { cmd: "/arena addspawn <name>", desc: "Admin — register a spawn point." },
+  { cmd: "/arena info <name>", desc: "Admin — inspect an arena's config." },
+  { cmd: "/arena list", desc: "Admin — list all loaded arenas." },
+  { cmd: "/hg start", desc: "Admin — force-start the next round." },
+  { cmd: "/hg reset", desc: "Admin — reset the current match." },
+];
+---
+
+<Layout>
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="brand">Peytz<span class="accent">PvP</span></div>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#kits">Kits</a>
+        <a href="#commands">Commands</a>
+        <a href="#play">Play</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <span class="tag">// Paper 1.21 · Java 21</span>
+      <h1>Hardcore Games. Old-school PvP.</h1>
+      <p class="lede">
+        PeytzPvP is a modern Hardcore Games plugin inspired by the survival-games servers
+        you grew up on. Drop into the arena, scavenge tiered chests, survive the grace
+        period — last player standing wins.
+      </p>
+      <div class="btn-row">
+        <a class="btn" href="#play">How to play</a>
+        <a class="btn secondary" href="https://github.com/WPeytz/PeytzPvP" target="_blank" rel="noopener"
+          >View on GitHub</a
+        >
+      </div>
+    </div>
+  </header>
+
+  <section id="features">
+    <div class="container">
+      <div class="eyebrow">// FEATURES</div>
+      <h2>What's in the box</h2>
+      <p style="color:var(--muted); margin-top:0; max-width:680px;">
+        A clean, config-driven core. No god classes, no reflection, no NMS — just a
+        small set of services doing one thing each.
+      </p>
+      <div class="grid" style="margin-top:2rem;">
+        {
+          features.map((f) => (
+            <article class="card">
+              <div class="icon">[{f.icon}]</div>
+              <h3>{f.title}</h3>
+              <p>{f.body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="kits" class="kits">
+    <div class="container">
+      <div class="eyebrow">// LOADOUTS</div>
+      <h2>Four starter kits</h2>
+      <p style="color:var(--muted); margin-top:0;">
+        Pick before the countdown ends. Every kit changes how you play the round.
+      </p>
+      <div class="grid" style="margin-top:2rem;">
+        {
+          kits.map((k) => (
+            <article class={`card ${k.cls}`}>
+              <h3>{k.name}</h3>
+              <p>{k.desc}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="commands">
+    <div class="container">
+      <div class="eyebrow">// COMMANDS</div>
+      <h2>Commands</h2>
+      <ul class="cmd-list" style="margin-top:1.5rem;">
+        {
+          commands.map((c) => (
+            <li>
+              <code>{c.cmd}</code>
+              <span class="desc">{c.desc}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section id="play">
+    <div class="container">
+      <div class="eyebrow">// HOW TO PLAY</div>
+      <h2>Jump into a round</h2>
+      <div class="grid" style="margin-top:2rem;">
+        <article class="card">
+          <div class="icon">[01]</div>
+          <h3>Join the lobby</h3>
+          <p>
+            Wait for {`{min: 2, max: 24}`} players. The countdown starts automatically
+            once the minimum is hit.
+          </p>
+        </article>
+        <article class="card">
+          <div class="icon">[02]</div>
+          <h3>Pick a kit</h3>
+          <p>Run <code style="color:var(--accent);">/kit</code> and choose your loadout before the round begins.</p>
+        </article>
+        <article class="card">
+          <div class="icon">[03]</div>
+          <h3>Loot &amp; survive</h3>
+          <p>
+            60 seconds of grace period. Scavenge tiered chests, then PvP unlocks and
+            the feast spawns.
+          </p>
+        </article>
+        <article class="card">
+          <div class="icon">[04]</div>
+          <h3>Last one alive</h3>
+          <p>Eliminations send you to spectator. Win the round, climb the leaderboard.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="brand" style="margin-bottom:0.75rem;">
+        Peytz<span class="accent">PvP</span>
+      </div>
+      <div class="small">
+        Not affiliated with Mojang or Microsoft. Built with Paper, Java 21, and Adventure.
+      </div>
+      <div class="small" style="margin-top:0.5rem;">
+        © {new Date().getFullYear()} PeytzPvP
+      </div>
+    </div>
+  </footer>
+</Layout>

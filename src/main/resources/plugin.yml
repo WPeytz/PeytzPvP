@@ -1,0 +1,24 @@
+name: HardcoreGames
+version: "${version}"
+main: com.william.hg.HardcoreGamesPlugin
+api-version: "1.21"
+description: Hardcore Games PvP plugin
+author: William
+
+commands:
+  arena:
+    description: Manage HG arenas
+    usage: /arena <create|addspawn|info|list> [args]
+    permission: hg.admin
+  hg:
+    description: Hardcore Games admin commands
+    usage: /hg <reset|start>
+    permission: hg.admin
+  kit:
+    description: Select a kit
+    usage: /kit [name]
+
+permissions:
+  hg.admin:
+    description: Admin access to HG commands
+    default: op
