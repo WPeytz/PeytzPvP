@@ -162,6 +162,53 @@ h3 {
   justify-content: center;
   flex-wrap: wrap;
 }
+
+.connect {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: var(--panel);
+  border: 2px solid var(--border);
+  box-shadow: 4px 4px 0 #000;
+  padding: 1rem 1.25rem;
+  margin: 0 auto 2rem;
+  text-align: left;
+}
+.connect-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+.connect-label {
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
+  color: var(--muted);
+  letter-spacing: 1px;
+  min-width: 80px;
+}
+.connect-addr {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 1.15rem;
+  color: var(--accent);
+  background: #0a100a;
+  border: 2px solid #000;
+  padding: 0.4rem 0.7rem;
+  cursor: pointer;
+  transition: color 0.1s ease, background 0.1s ease;
+}
+.connect-addr:hover {
+  background: #0e1a0a;
+  color: #9be07a;
+}
+.connect-addr.copied {
+  color: var(--gold);
+}
+.connect-version {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 1.05rem;
+  color: var(--text);
+}
 .btn {
   display: inline-block;
   font-family: var(--font-pixel);

@@ -91,12 +91,50 @@ const commands = [
         you grew up on. Drop into the arena, scavenge tiered chests, survive the grace
         period — last player standing wins.
       </p>
+
+      <div class="connect">
+        <div class="connect-row">
+          <span class="connect-label">Server</span>
+          <button
+            class="connect-addr"
+            type="button"
+            data-copy="play.peytzpvp.com"
+            aria-label="Copy server address"
+          >
+            play.peytzpvp.com
+          </button>
+        </div>
+        <div class="connect-row">
+          <span class="connect-label">Version</span>
+          <span class="connect-version">Minecraft Java 1.21</span>
+        </div>
+      </div>
+
       <div class="btn-row">
         <a class="btn" href="#play">How to play</a>
         <a class="btn secondary" href="https://github.com/WPeytz/PeytzPvP" target="_blank" rel="noopener"
           >View on GitHub</a
         >
       </div>
+
+      <script is:inline>
+        document.addEventListener("click", (e) => {
+          const t = e.target;
+          if (!(t instanceof HTMLElement)) return;
+          const btn = t.closest("[data-copy]");
+          if (!btn) return;
+          const value = btn.getAttribute("data-copy");
+          if (!value) return;
+          navigator.clipboard?.writeText(value);
+          const original = btn.textContent;
+          btn.textContent = "copied!";
+          btn.classList.add("copied");
+          setTimeout(() => {
+            btn.textContent = original;
+            btn.classList.remove("copied");
+          }, 1200);
+        });
+      </script>
     </div>
   </header>
 
@@ -166,10 +204,10 @@ const commands = [
       <div class="grid" style="margin-top:2rem;">
         <article class="card">
           <div class="icon">[01]</div>
-          <h3>Join the lobby</h3>
+          <h3>Connect</h3>
           <p>
-            Wait for {`{min: 2, max: 24}`} players. The countdown starts automatically
-            once the minimum is hit.
+            Java Edition 1.21 → add server <code style="color:var(--accent);">play.peytzpvp.com</code>.
+            You'll spawn in the lobby; the round starts once {`{min: 2}`} players are in.
           </p>
         </article>
         <article class="card">
