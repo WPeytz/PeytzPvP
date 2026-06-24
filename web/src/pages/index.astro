@@ -82,7 +82,8 @@ const commands = [
     </div>
   </nav>
 
-  <header class="hero">
+  <main class="deck" id="deck">
+  <header class="hero slide" id="home">
     <div class="container">
       <span class="tag">// Paper 1.21 · Java 21</span>
       <h1>Hardcore Games. Old-school PvP.</h1>
@@ -138,7 +139,7 @@ const commands = [
     </div>
   </header>
 
-  <section id="features">
+  <section id="features" class="slide">
     <div class="container">
       <div class="eyebrow">// FEATURES</div>
       <h2>What's in the box</h2>
@@ -160,7 +161,7 @@ const commands = [
     </div>
   </section>
 
-  <section id="kits" class="kits">
+  <section id="kits" class="kits slide">
     <div class="container">
       <div class="eyebrow">// LOADOUTS</div>
       <h2>Four starter kits</h2>
@@ -180,7 +181,7 @@ const commands = [
     </div>
   </section>
 
-  <section id="commands">
+  <section id="commands" class="slide">
     <div class="container">
       <div class="eyebrow">// COMMANDS</div>
       <h2>Commands</h2>
@@ -197,7 +198,7 @@ const commands = [
     </div>
   </section>
 
-  <section id="play">
+  <section id="play" class="slide">
     <div class="container">
       <div class="eyebrow">// HOW TO PLAY</div>
       <h2>Jump into a round</h2>
@@ -231,18 +232,109 @@ const commands = [
       </div>
     </div>
   </section>
+  </main>
 
-  <footer>
-    <div class="container">
-      <div class="brand" style="margin-bottom:0.75rem;">
-        Peytz<span class="accent">PvP</span>
-      </div>
-      <div class="small">
-        Not affiliated with Mojang or Microsoft. Built with Paper, Java 21, and Adventure.
-      </div>
-      <div class="small" style="margin-top:0.5rem;">
-        © {new Date().getFullYear()} PeytzPvP
-      </div>
-    </div>
+  <div class="deck-controls">
+    <button class="deck-btn" id="prevBtn" type="button" aria-label="Previous">‹ Prev</button>
+    <div class="dots" id="dots" role="tablist" aria-label="Sections"></div>
+    <button class="deck-btn" id="nextBtn" type="button" aria-label="Next">Next ›</button>
+  </div>
+
+  <footer class="deck-footer">
+    Not affiliated with Mojang or Microsoft. © {new Date().getFullYear()} PeytzPvP
   </footer>
+
+  <script is:inline>
+    (function () {
+      const deck = document.getElementById("deck");
+      const slides = Array.from(deck.querySelectorAll(".slide"));
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const dotsWrap = document.getElementById("dots");
+      const labels = ["Home", "Features", "Kits", "Commands", "Play"];
+      let i = 0;
+
+      // When embedded (PeytzGames play page), let the host size the iframe to
+      // the active slide so there's no nested scrollbar. Pin body height to
+      // content first, otherwise min-height:100vh would track the iframe and
+      // the reported height would ratchet upward.
+      const embedded = window.self !== window.top;
+      if (embedded) {
+        const s = document.createElement("style");
+        s.textContent =
+          "html,body{min-height:0!important;height:auto!important;}";
+        document.head.appendChild(s);
+      }
+      let raf = 0;
+      function reportHeight() {
+        if (!embedded) return;
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          parent.postMessage(
+            {
+              type: "embed:height",
+              height: document.documentElement.scrollHeight,
+            },
+            "*",
+          );
+        });
+      }
+
+      const dots = slides.map((_, idx) => {
+        const d = document.createElement("button");
+        d.type = "button";
+        d.className = "dot";
+        d.setAttribute("aria-label", labels[idx] || "Slide " + (idx + 1));
+        d.addEventListener("click", () => go(idx));
+        dotsWrap.appendChild(d);
+        return d;
+      });
+
+      function go(n) {
+        i = Math.max(0, Math.min(slides.length - 1, n));
+        slides.forEach((s, idx) => {
+          s.classList.toggle("is-active", idx === i);
+          if (idx === i) s.scrollTop = 0;
+        });
+        dots.forEach((d, idx) => d.classList.toggle("is-active", idx === i));
+        prevBtn.disabled = i === 0;
+        nextBtn.disabled = i === slides.length - 1;
+        reportHeight();
+      }
+
+      prevBtn.addEventListener("click", () => go(i - 1));
+      nextBtn.addEventListener("click", () => go(i + 1));
+
+      // In-page anchors (nav links, "How to play") jump to the matching slide.
+      document.querySelectorAll('a[href^="#"]').forEach((a) => {
+        a.addEventListener("click", (e) => {
+          const id = (a.getAttribute("href") || "").slice(1);
+          const idx = slides.findIndex((s) => s.id === id);
+          if (idx >= 0) {
+            e.preventDefault();
+            go(idx);
+          }
+        });
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "PageDown") go(i + 1);
+        else if (e.key === "ArrowLeft" || e.key === "PageUp") go(i - 1);
+      });
+
+      // Deep-link / start on a specific slide via #hash (e.g. /#commands).
+      const startId = (location.hash || "").slice(1);
+      const startIdx = slides.findIndex((s) => s.id === startId);
+      go(startIdx >= 0 ? startIdx : 0);
+
+      // Re-report height after fonts load / on resize (pixel font reflows).
+      if (embedded) {
+        window.addEventListener("load", reportHeight);
+        window.addEventListener("resize", reportHeight);
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(reportHeight);
+        }
+      }
+    })();
+  </script>
 </Layout>
